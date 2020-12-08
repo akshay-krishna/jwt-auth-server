@@ -5,6 +5,10 @@ const UserModel = require("./UserModel");
 const auth = require("./auth");
 connectDb();
 
+app.get("/", (req, res) => {
+  res.json({ msg: "The server is fine ya doofus!! check your fucking code " });
+});
+
 app.post("/", async (req, res) => {
   const { name, password } = req.body;
   try {
@@ -49,14 +53,14 @@ app.post("/auth", async (req, res) => {
   }
 });
 
-app.get("/protected", auth, async (req, res) => {
+app.get("/dashboard", auth, async (req, res) => {
   const { uid } = req;
   try {
-    const user = await UserModel.findById(uid);
+    const user = await UserModel.findById(uid, "-password");
     if (!user) {
       return res.sendStatus(404);
     }
-    res.json({ msg: `Welcome ${user.name}` });
+    res.json({ user });
   } catch (err) {
     console.error(err.message);
     res.sendStatus(500);
